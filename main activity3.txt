@@ -1,0 +1,69 @@
+package com.example.simplecalculator;
+
+import android.os.Bundle;
+import android.view.View; // ✅ Import this
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText resultText;
+    private Button addBtn, subBtn, mulBtn, divBtn, clearBtn;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        resultText = findViewById(R.id.result_text);
+        addBtn = findViewById(R.id.add_btn);
+        subBtn = findViewById(R.id.sub_btn);
+        mulBtn = findViewById(R.id.mul_btn);
+        divBtn = findViewById(R.id.div_btn);
+        clearBtn = findViewById(R.id.clear_btn);
+
+        View.OnClickListener operatorListener = v -> {
+            String[] nums = resultText.getText().toString().trim().split(" ");
+            if (nums.length != 2) {
+                showToast("Enter two numbers separated by space");
+                return;
+            }
+
+            double num1, num2;
+            try {
+                num1 = Double.parseDouble(nums[0]);
+                num2 = Double.parseDouble(nums[1]);
+            } catch (NumberFormatException e) {
+                showToast("Invalid numbers");
+                return;
+            }
+
+            double result;
+            int id = v.getId();
+            if (id == R.id.add_btn) result = num1 + num2;
+            else if (id == R.id.sub_btn) result = num1 - num2;
+            else if (id == R.id.mul_btn) result = num1 * num2;
+            else if (id == R.id.div_btn) {
+                if (num2 == 0) {
+                    showToast("Cannot divide by zero");
+                    return;
+                }
+                result = num1 / num2;
+            } else return;
+
+            resultText.setText(String.format("Result: %.2f", result));
+        };
+
+        addBtn.setOnClickListener(operatorListener);
+        subBtn.setOnClickListener(operatorListener);
+        mulBtn.setOnClickListener(operatorListener);
+        divBtn.setOnClickListener(operatorListener);
+        clearBtn.setOnClickListener(v -> resultText.setText(""));
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+}
